@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Funções auxiliares
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isCollaborator(deckData) {
+      return request.auth.uid in deckData.collaborators;
+    }
+    
+    // Regras para a coleção Users
+    match /users/{userId} {
+      // Qualquer usuário autenticado pode ler os dados dos usuários
+      allow read: if isAuthenticated();
+      // Somente o próprio usuário pode alterar seu documento
+      allow write: if isOwner(userId);
+    }
+    
+    // Regras para a coleção Decks
+    match /decks/{deckId} {
+      // Permite leitura se o deck for público, se o usuário for o dono ou colaborador
+      allow read: if resource.data.visibility == 'public' ||
+                  isOwner(resource.data.userId) ||
+                  isCollaborator(resource.data);
+      // Apenas o dono pode criar/editar/excluir decks
+      allow write: if isOwner(resource.data.userId);
+    }
+    
+    // Regras para a coleção Flashcards
+    match /flashcards/{cardId} {
+      // Para ler um flashcard, verifica se o deck associado é público ou se o usuário é o dono
+      allow read: if get(/databases/$(database)/documents/decks/$(resource.data.deckId)).data.visibility == 'public' ||
+                  isOwner(get(/databases/$(database)/documents/decks/$(resource.data.deckId)).data.userId);
+      // Apenas o dono do deck pode escrever nos flashcards
+      allow write: if isOwner(get(/databases/$(database)/documents/decks/$(resource.data.deckId)).data.userId);
+    }
+    
+    // Regras para a coleção Reviews
+    match /reviews/{reviewId} {
+      // Apenas o usuário que criou a revisão pode ler
+      allow read: if isOwner(resource.data.userId);
+      // Permite criação somente se o usuário for o dono indicado na revisão
+      allow create: if isOwner(request.resource.data.userId);
+      // Não permite atualizações ou deleções (opcional, ajuste conforme necessidade)
+      allow update, delete: if false;
+    }
+    
+    // Regras para a coleção Sessions
+    match /sessions/{sessionId} {
+      // Apenas o usuário que criou a sessão pode ler
+      allow read: if isOwner(resource.data.userId);
+      // Permite criação somente se o usuário for o dono indicado na sessão
+      allow create: if isOwner(request.resource.data.userId);
+      // Não permite atualizações ou deleções (opcional, ajuste conforme necessidade)
+      allow update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,64 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # Incrementa o build number
+    increment_build_number(
+      xcodeproj: "Runner.xcodeproj"
+    )
+
+    # Atualiza os certificados
+    sync_code_signing(
+      type: "appstore",
+      readonly: true
+    )
+
+    # Build e archive
+    build_ios_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "com.easyreading.app" => "EasyReading App Store Profile"
+        }
+      }
+    )
+
+    # Upload para o TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      apple_id: ENV["APPLE_ID"]
+    )
+
+    # Notifica no Slack
+    slack(
+      message: "Nova versão do EasyReading iOS enviada para o TestFlight!",
+      success: true,
+      slack_url: ENV["SLACK_URL"]
+    )
+  end
+
+  desc "Deploy a new version to the App Store"
+  lane :release do
+    # Incrementa a versão
+    increment_version_number(
+      xcodeproj: "Runner.xcodeproj"
+    )
+
+    # Build e deploy
+    build_ios_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner"
+    )
+
+    # Upload para a App Store
+    upload_to_app_store(
+      force: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+end

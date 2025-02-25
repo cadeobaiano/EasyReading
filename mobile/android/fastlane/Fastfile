@@ -1,0 +1,50 @@
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    # Incrementa a versão do build
+    increment_version_code(
+      gradle_file_path: "./app/build.gradle"
+    )
+
+    # Build do APK de release
+    gradle(
+      task: "clean assembleRelease",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"],
+        "android.injected.signing.store.password" => ENV["STORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
+      }
+    )
+
+    # Upload para o Google Play Console
+    upload_to_play_store(
+      track: 'internal',
+      aab: "./app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      release_status: "draft"
+    )
+
+    # Notifica no Slack
+    slack(
+      message: "Nova versão do EasyReading Android enviada para o Google Play Console!",
+      success: true,
+      slack_url: ENV["SLACK_URL"]
+    )
+  end
+
+  desc "Run tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Beta Build"
+  lane :beta do
+    gradle(task: "clean assembleRelease")
+    upload_to_play_store(track: 'beta')
+  end
+end

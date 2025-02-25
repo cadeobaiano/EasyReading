@@ -1,0 +1,48 @@
+# Arquivos de configuração sensíveis
+*.env
+.env.local
+google-services.json
+GoogleService-Info.plist
+service-account.json
+*firebase-adminsdk*.json
+
+# Dependências e build
+node_modules/
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+pubspec.lock
+
+# Arquivos compilados
+*.apk
+*.ipa
+*.aab
+*.class
+*.jar
+*.war
+
+# Logs e backups
+*.log
+*.bak
+logs/
+backup/
+
+# IDEs e editores
+.idea/
+.vscode/
+*.iml
+*.iws
+.DS_Store
+
+# Firebase local
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Outros
+*.zip
+*.tar.gz
+*.rar

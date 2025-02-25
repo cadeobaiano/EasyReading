@@ -1,0 +1,127 @@
+{
+  "dashboards": [
+    {
+      "name": "EasyReading Performance",
+      "widgets": [
+        {
+          "title": "App Performance",
+          "metrics": [
+            {
+              "name": "startup_time",
+              "filter": "event_name:app_start",
+              "aggregation": "AVERAGE"
+            },
+            {
+              "name": "memory_usage",
+              "filter": "event_name:memory_warning",
+              "aggregation": "MAX"
+            }
+          ]
+        },
+        {
+          "title": "User Engagement",
+          "metrics": [
+            {
+              "name": "daily_active_users",
+              "filter": "event_name:session_start",
+              "aggregation": "COUNT_DISTINCT"
+            },
+            {
+              "name": "study_time",
+              "filter": "event_name:study_session_end",
+              "aggregation": "SUM"
+            }
+          ]
+        },
+        {
+          "title": "Error Monitoring",
+          "metrics": [
+            {
+              "name": "crash_free_users",
+              "filter": "event_name:crash",
+              "aggregation": "PERCENTAGE"
+            },
+            {
+              "name": "error_count",
+              "filter": "event_name:error",
+              "aggregation": "COUNT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EasyReading Usage",
+      "widgets": [
+        {
+          "title": "Deck Statistics",
+          "metrics": [
+            {
+              "name": "decks_created",
+              "filter": "event_name:deck_created",
+              "aggregation": "COUNT"
+            },
+            {
+              "name": "cards_studied",
+              "filter": "event_name:card_reviewed",
+              "aggregation": "COUNT"
+            }
+          ]
+        },
+        {
+          "title": "User Growth",
+          "metrics": [
+            {
+              "name": "new_users",
+              "filter": "event_name:first_open",
+              "aggregation": "COUNT"
+            },
+            {
+              "name": "retention_rate",
+              "filter": "event_name:session_start",
+              "aggregation": "RETENTION"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "name": "High Error Rate",
+      "condition": {
+        "metric": "error_count",
+        "threshold": 100,
+        "window": "1h"
+      },
+      "notification": {
+        "channels": ["email", "slack"],
+        "message": "Error rate exceeded threshold"
+      }
+    },
+    {
+      "name": "Performance Degradation",
+      "condition": {
+        "metric": "startup_time",
+        "threshold": 5000,
+        "window": "5m"
+      },
+      "notification": {
+        "channels": ["email", "slack"],
+        "message": "App startup time exceeding 5 seconds"
+      }
+    },
+    {
+      "name": "Database Usage",
+      "condition": {
+        "metric": "firestore_document_count",
+        "threshold": 1000000,
+        "window": "1d"
+      },
+      "notification": {
+        "channels": ["email"],
+        "message": "High Firestore usage detected"
+      }
+    }
+  ]
+}
