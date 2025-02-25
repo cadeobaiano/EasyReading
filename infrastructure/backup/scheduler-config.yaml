@@ -1,0 +1,10 @@
+schedules:
+  - name: firestore-daily-backup
+    schedule: "0 0 * * *"  # Todo dia à meia-noite
+    function: dailyBackup
+    timeZone: "America/Sao_Paulo"
+
+  - name: firestore-weekly-backup
+    schedule: "0 0 * * 0"  # Todo domingo à meia-noite
+    function: weeklyBackup
+    timeZone: "America/Sao_Paulo"

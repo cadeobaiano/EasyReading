@@ -1,48 +1,67 @@
-# Arquivos de configuração sensíveis
-*.env
-.env.local
-google-services.json
-GoogleService-Info.plist
-service-account.json
-*firebase-adminsdk*.json
-
-# Dependências e build
-node_modules/
-build/
+# Dart/Flutter
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
-pubspec.lock
-
-# Arquivos compilados
-*.apk
-*.ipa
-*.aab
-*.class
-*.jar
-*.war
-
-# Logs e backups
-*.log
-*.bak
-logs/
-backup/
-
-# IDEs e editores
+.packages
+build/
+*.iml
 .idea/
 .vscode/
-*.iml
-*.iws
-.DS_Store
 
-# Firebase local
+# Firebase
 .firebase/
-firebase-debug.log
-firestore-debug.log
-ui-debug.log
+**/google-services.json
+**/GoogleService-Info.plist
+**/*.keystore
+**/*.jks
+**/service-account.json
+**/*-firebase-adminsdk-*.json
 
-# Outros
+# Dependencies
+**/node_modules/
+**/pubspec.lock
+**/package-lock.json
+
+# Build outputs
+**/build/
+**/dist/
+**/out/
+
+# Local environment files
+.env
+.env.local
+*.env.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Backup files
 *.zip
-*.tar.gz
-*.rar
+*.bak
+*~
+
+# Test coverage
+coverage/
+.test_coverage.dart
+lcov.info
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Local development
+local.properties
+.gradle/
